@@ -50,7 +50,6 @@ func DatasetFromCsv(path string) *Dataset {
 	ds.Headers = headers
 	ds.Types = make(map[string]reflect.Kind)
 	ds.Data = make([]map[string]any, 0)
-	fmt.Println(headers)
 
 	for {
 		record, err := r.Read()
