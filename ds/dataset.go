@@ -7,6 +7,8 @@ import (
 	"os"
 	"reflect"
 	"strconv"
+	"strings"
+	"text/tabwriter"
 )
 
 type Dataset struct {
@@ -16,21 +18,33 @@ type Dataset struct {
 }
 
 func (ds Dataset) String() string {
-	var s string
-	for i, v := range ds.Headers {
-		s += fmt.Sprintf("| <'%s'>[index=%d][type=%s] ", v, i, ds.Types[v])
-	}
-	s += fmt.Sprintf("|\n")
+	var buffer strings.Builder
 
-	for i := 0; i < len(ds.Data); i++ {
-		for _, v := range ds.Headers {
-			s += fmt.Sprintf("| %v", ds.Data[i][v])
+	w := tabwriter.NewWriter(&buffer, 1, 0, 3, ' ', tabwriter.Debug)
+
+	headerRow := strings.Join(ds.Headers, "\t")
+	fmt.Fprintln(w, headerRow)
+
+	separator := make([]string, len(ds.Headers))
+	for i := range separator {
+		separator[i] = strings.Repeat("-", 15)
+	}
+	separatorRow := strings.Join(separator, "\t")
+	fmt.Fprintln(w, separatorRow)
+
+	for _, row := range ds.Data {
+		var rowValues []string
+		for _, header := range ds.Headers {
+			value := fmt.Sprintf("%v", row[header])
+			rowValues = append(rowValues, value)
 		}
-		s += fmt.Sprintf("| ")
-		s += fmt.Sprintf("\n")
+		rowStr := strings.Join(rowValues, "\t")
+		fmt.Fprintln(w, rowStr)
 	}
 
-	return s
+	w.Flush()
+
+	return buffer.String()
 }
 
 func DatasetFromCsv(path string) *Dataset {
