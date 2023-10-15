@@ -19,8 +19,8 @@ func (ds Dataset) String() string {
 	s += fmt.Sprintf("|\n")
 
 	for i := 0; i < len(ds.Data); i++ {
-		for _, v := range ds.Data[i] {
-			s += fmt.Sprintf("| %v", v)
+		for _, v := range ds.Headers {
+			s += fmt.Sprintf("| %v", ds.Data[i][v])
 		}
 		s += fmt.Sprintf("| ")
 		s += fmt.Sprintf("\n")
