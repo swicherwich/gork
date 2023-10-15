@@ -25,3 +25,19 @@ func Reduce[T Number](ds ds.Dataset, col string, acc T, reducer ReduceFunc[T]) T
 	}
 	return acc
 }
+
+type Mapper[T any] interface {
+	doMap(a T) T
+}
+
+type MapFunc[T any] func(a T) T
+
+func (mapper MapFunc[T]) doMap(a T) T {
+	return mapper(a)
+}
+
+func Map[T any](ds *ds.Dataset, col string, mapper MapFunc[T]) {
+	for i := 0; i < len(ds.Data); i++ {
+		ds.Data[i][col] = mapper.doMap(ds.Data[i][col].(T))
+	}
+}
