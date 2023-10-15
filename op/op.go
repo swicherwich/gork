@@ -1,7 +1,7 @@
 package op
 
 import (
-	"github.com/swicherwich/gork/internal/pkg/ds"
+	"github.com/swicherwich/gork/ds"
 	"golang.org/x/exp/constraints"
 )
 
