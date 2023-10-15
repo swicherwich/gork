@@ -80,5 +80,12 @@ func Group[T Number](d *ds.Dataset, gByCol []string, gDataCol string, reducer Re
 		groupedData = append(groupedData, group)
 	}
 
+	headers := make([]string, 0)
+	for _, v := range gByCol {
+		headers = append(headers, v)
+	}
+	headers = append(headers, gDataCol)
+
+	d.Headers = headers
 	d.Data = groupedData
 }
