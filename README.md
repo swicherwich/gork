@@ -1,12 +1,6 @@
-package main
+Usage:
 
-import (
-	"fmt"
-	"github.com/swicherwich/gork/internal/pkg/ds"
-	"github.com/swicherwich/gork/internal/pkg/op"
-	"reflect"
-)
-
+```go
 func main() {
 	dataset := ds.Dataset{
 		Headers: []string{"col1", "col2"},
@@ -19,6 +13,12 @@ func main() {
 			{"col1": "rec3", "col2": 33},
 		},
 	}
+	doubler := func(a int) int { return a * 2 }
+
 	fmt.Println(dataset.String())
+	op.Map[int](&dataset, "col2", doubler)
+	fmt.Println(dataset.String())
+
 	fmt.Println(op.Reduce(dataset, "col2", 0, func(acc *int, a int) { *acc += a }))
 }
+```
