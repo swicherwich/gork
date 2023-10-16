@@ -1,3 +1,5 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/swicherwich/gork)](https://goreportcard.com/report/github.com/swicherwich/gork)
+
 Usage example:
 
 ```go
