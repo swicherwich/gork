@@ -83,6 +83,54 @@ func DatasetFromCsv(path string) *Dataset {
 	return ds
 }
 
+func (ds Dataset) SaveCsv(path string) error {
+	file, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	w := csv.NewWriter(file)
+
+	err = writeRecord(w, ds.Headers)
+	if err != nil {
+		removeErr := os.Remove(path)
+		return fmt.Errorf("error occurred while wring to file: %s, %s", err, removeErr)
+	}
+	w.Flush()
+
+	flushSize := 100
+	var recCounter int
+	for _, record := range ds.Data {
+		row := convertMapToSlice(ds.Headers, record)
+		err := writeRecord(w, row)
+		if err != nil {
+			removeErr := os.Remove(path)
+			return fmt.Errorf("error occurred while wring to file: %s, %s", err, removeErr)
+		}
+		if recCounter%flushSize == 0 {
+			w.Flush()
+		}
+	}
+	return nil
+}
+
+func writeRecord(w *csv.Writer, record []string) error {
+	err := w.Write(record)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func convertMapToSlice(headers []string, record map[string]any) []string {
+	slice := make([]string, 0)
+	for _, header := range headers {
+		slice = append(slice, fmt.Sprintf("%v", record[header]))
+	}
+	return slice
+}
+
 func parseValue(val any) (v any, kind reflect.Kind) {
 	s := val.(string)
 	i, err := strconv.Atoi(s)
