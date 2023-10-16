@@ -27,6 +27,21 @@ func TestDatasetFromCsv(t *testing.T) {
 	}
 }
 
+func TestParseValue(t *testing.T) {
+	val, kind := parseValue("str")
+	if val != "str" || kind != reflect.String {
+		t.Fatalf("parseValue(\"str\") = [val=%s, kind=%s], want = [val=%s, kind=%s]", val, kind, "str", reflect.String)
+	}
+	val, kind = parseValue("1")
+	if val != 1 || kind != reflect.Int {
+		t.Fatalf("parseValue(1) = [val=%s, kind=%s], want = [val=%d, kind=%s]", val, kind, 1, reflect.Int)
+	}
+	val, kind = parseValue("true")
+	if val != true || kind != reflect.Bool {
+		t.Fatalf("parseValue(1) = [val=%s, kind=%s], want = [val=%v, kind=%s]", val, kind, true, reflect.Bool)
+	}
+}
+
 func getDataset() Dataset {
 	return Dataset{
 		Headers: []string{"col1", "col2"},
