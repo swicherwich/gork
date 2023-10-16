@@ -60,6 +60,25 @@ func TestGroup(t *testing.T) {
 	}
 }
 
+func TestFilter(t *testing.T) {
+	dataset := getDataset()
+	want := &ds.Dataset{
+		Headers: []string{"col1", "col2"},
+		Types: map[string]reflect.Kind{
+			"col1": reflect.String, "col2": reflect.Int,
+		},
+		Data: []map[string]any{
+			{"col1": "rec2", "col2": 22},
+		},
+	}
+
+	Filter(&dataset, "col2", func(a int) bool { return a == 22 })
+
+	if dataset.Data[0]["col2"] != want.Data[0]["col2"] {
+		t.Fatalf("Filter(&dataset, 'col2'', func(a int) bool { return a == 22 }) = \n%v, want \n%v", dataset, want)
+	}
+}
+
 func getDataset() ds.Dataset {
 	return ds.Dataset{
 		Headers: []string{"col1", "col2"},
