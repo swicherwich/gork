@@ -20,10 +20,6 @@ func (reducer ReduceFunc[T]) doReduce(acc *T, a T) {
 	reducer(acc, a)
 }
 
-type Aggregator[T Number] interface {
-	Reduce(ds ds.Dataset, col string, acc T, reducer ReduceFunc[T]) T
-}
-
 func Reduce[T Number](ds ds.Dataset, col string, acc T, reducer ReduceFunc[T]) T {
 	for i := 0; i < len(ds.Data); i++ {
 		reducer.doReduce(&acc, ds.Data[i][col].(T))
@@ -45,6 +41,27 @@ func Map[T any](ds *ds.Dataset, col string, mapper MapFunc[T]) {
 	for i := 0; i < len(ds.Data); i++ {
 		ds.Data[i][col] = mapper.doMap(ds.Data[i][col].(T))
 	}
+}
+
+type filterI[T any] interface {
+	doFilter(a T) bool
+}
+
+type FilterFunc[T any] func(a T) bool
+
+func (filter FilterFunc[T]) doFilter(a T) bool {
+	return filter(a)
+}
+
+func Filter[T any](d *ds.Dataset, col string, filter FilterFunc[T]) {
+	filteredData := make([]map[string]any, 0)
+
+	for i := 0; i < len(d.Data); i++ {
+		if filter(d.Data[i][col].(T)) {
+			filteredData = append(filteredData, d.Data[i])
+		}
+	}
+	d.Data = filteredData
 }
 
 func Group[T Number](d *ds.Dataset, gByCol []string, gDataCol string, reducer ReduceFunc[T]) {
